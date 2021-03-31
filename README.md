@@ -20,15 +20,15 @@ Testing environment: **'Pendulum-v0'**. What you just need to do is running the 
 
 spinningup-DDPG reward curve:
 
-<img src="F:\MasterDegree\ReinforcementLearning\DRL-algorithm-library-master\imgs\spin_ddpg.png" alt="spin_ddpg" style="zoom:33%;" />
+![Alt text](./imgs/spin_ddpg.png)
 
 spinningup-TD3 reward curve:
 
-<img src="F:\MasterDegree\ReinforcementLearning\DRL-algorithm-library-master\imgs\spin_td3.png" alt="spin_td3" style="zoom:33%;" />
+![Alt text](./imgs/spin_td3.png)
 
 spinningup-SAC reward curve:
 
-<img src="F:\MasterDegree\ReinforcementLearning\DRL-algorithm-library-master\imgs\spinSAC.png" alt="spinSAC" style="zoom:33%;" />
+![Alt text](./imgs/spinSAC.png)
 
 ## Project tree
 
