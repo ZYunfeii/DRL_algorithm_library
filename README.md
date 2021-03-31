@@ -14,6 +14,17 @@ The project covers the following algorithms：
 
 All the algorithms adopt the **pytorch** framework. All the codes are combined in the easiest way to understand, which is suitable for beginners of reinforcement learning, but the code performance is excellent.
 
+## References
+This project also provides the reference of these algorithms:
+
+* Multi-Agent Actor-Critic for Mixed Cooperative-Competitive Environments
+* CONTINUOUS CONTROL WITH DEEP REINFORCEMENT
+* High-Dimensional Continuous Control Using Generalized Advantage Estimation
+* Proximal Policy Optimization
+* Soft Actor-Critic Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor
+* Auto alpha  Soft Actor-Critic Algorithms and Applications
+* Addressing Function Approximation Error in Actor-Critic Methods
+
 ## Results
 
 Testing environment: **'Pendulum-v0'**. What you just need to do is running the **main.py**. Here are the results of several cases:
