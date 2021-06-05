@@ -6,6 +6,7 @@ This is a reinforcement learning algorithm library. The code takes into account 
 
 The project covers the following algorithms：
 
+* **D3QN**
 * **DDPG**
 * **PPO+GAE，multi-processing-PPO**
 * **TD3**
