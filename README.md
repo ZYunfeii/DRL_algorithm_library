@@ -8,7 +8,7 @@ The project covers the following algorithms：
 
 * **D3QN**
 * **DDPG**
-* **PPO+GAE，multi-processing-PPO**
+* **PPO+GAE，multi-processing-PPO, discrete PPO**
 * **TD3**
 * **SAC**
 * **MADDPG**
