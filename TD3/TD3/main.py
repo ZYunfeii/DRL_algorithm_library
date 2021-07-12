@@ -4,7 +4,8 @@ import gym
 from TD3Model import AgentTD3, ReplayBuffer
 import matplotlib.pyplot as plt
 import numpy as np
-
+import time
+from PPO.draw import Painter
 if __name__ == "__main__":
     env = gym.make('Pendulum-v0')
     state_dim, action_dim = env.observation_space.shape[0], env.action_space.shape[0]
@@ -16,7 +17,8 @@ if __name__ == "__main__":
     batch_size = 100
     gamma = 0.99
     reward_list = []
-
+    time_list = []
+    begin = time.time()
     for episode in range(MAX_EPISODE):
         s = env.reset()
         ep_reward = 0
@@ -36,8 +38,13 @@ if __name__ == "__main__":
             s = s_
             if d: break
         reward_list.append(ep_reward)
-        print('Episode:', episode, 'Reward:%f' % ep_reward)
-    plt.figure()
-    plt.plot(np.arange(len(reward_list)), reward_list)
-    plt.show()
+        time_list.append(time.time()-begin)
+        print('Episode:', episode, 'Reward:%f' % ep_reward, 'time:%f'%(time_list[-1]))
+    # plt.figure()
+    # plt.plot(np.arange(len(reward_list)), reward_list)
+    # plt.show()
+
+    painter = Painter(load_csv=False)
+    painter.addData(reward_list,'TD3',x=time_list)
+    painter.drawFigure()
 

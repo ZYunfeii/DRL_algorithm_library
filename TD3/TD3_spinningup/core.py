@@ -54,4 +54,7 @@ class MLPActorCritic(nn.Module):
 
     def act(self, obs):
         with torch.no_grad():
-            return self.pi(obs).numpy()
+            if torch.cuda.is_available():
+                return self.pi(obs).cpu().numpy()
+            else:
+                return self.pi(obs).numpy()

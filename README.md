@@ -6,16 +6,16 @@ This is a reinforcement learning algorithm library. The code takes into account 
 
 The project covers the following algorithms：
 
-* **D3QN**
 * **DDPG**
-* **PPO+GAE，multi-processing-PPO, discrete PPO**
+* **PPO+GAE**
 * **TD3**
 * **SAC**
 * **MADDPG**
 
 All the algorithms adopt the **pytorch** framework. All the codes are combined in the easiest way to understand, which is suitable for beginners of reinforcement learning, but the code performance is excellent.
 
-## References
+## Reference
+
 This project also provides the reference of these algorithms:
 
 * Multi-Agent Actor-Critic for Mixed Cooperative-Competitive Environments
@@ -32,15 +32,15 @@ Testing environment: **'Pendulum-v0'**. What you just need to do is running the 
 
 spinningup-DDPG reward curve:
 
-![Alt text](./imgs/spin_ddpg.png)
+<img src="./imgs/spin_ddpg.png" alt="spin_ddpg" style="zoom:33%;" />
 
 spinningup-TD3 reward curve:
 
-![Alt text](./imgs/spin_td3.png)
+<img src="./imgs/spin_td3.png" alt="spin_td3" style="zoom:33%;" />
 
 spinningup-SAC reward curve:
 
-![Alt text](./imgs/spinSAC.png)
+<img src="./imgs/spinSAC.png" alt="spinSAC" style="zoom:33%;" />
 
 ## Project tree
 

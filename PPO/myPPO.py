@@ -9,11 +9,9 @@ from time import time
 
 def test(env,model):
     state = env.reset()
-
     for step_sum in range(500):
         # env.render()
         action, log_prob = ppo.select_action((state,))
-
         next_state, reward, done, _ = env.step(np.tanh(action))
         if done:
             break

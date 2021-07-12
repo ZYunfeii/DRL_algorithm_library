@@ -7,6 +7,7 @@ from PPO.draw import Painter
 from copy import deepcopy
 from time import time
 import random
+from Arm_env import ArmEnv
 
 def setup_seed(seed):
     """设置随机数种子函数"""
@@ -89,10 +90,20 @@ def main2():
         2.主进程将所有子进程的transition打包为一个buffer后供网络训练
         3.将更新后的net再传到子进程，回到1
     """
-    env = gym.make('LunarLanderContinuous-v2')
-    net = GlobalNet(env.observation_space.shape[0], env.action_space.shape[0])
+    """gym环境"""
+    # env = gym.make('LunarLanderContinuous-v2')
+    # net = GlobalNet(env.observation_space.shape[0], env.action_space.shape[0])
+    """End"""
+
+    """机械臂环境"""
+    env = ArmEnv(mode='hard')
+    obs_dim = env.state_dim
+    act_dim = env.action_dim
+    net = GlobalNet(obs_dim, act_dim)
+    """End"""
+
     ppo = AgentPPO(deepcopy(net))
-    process_num = 12
+    process_num = 6
     pipe_dict = dict((i, (pipe1, pipe2)) for i in range(process_num) for pipe1, pipe2 in (multiprocessing.Pipe(),))
     child_process_list = []
     for i in range(process_num):
@@ -104,8 +115,9 @@ def main2():
     rewardList = list()
     timeList = list()
     begin = time()
-    MAX_EPISODE = 40
+    MAX_EPISODE = 150
     batch_size = 128
+    max_reward = -np.inf
     for episode in range(MAX_EPISODE):
         reward = 0
         buffer_list = list()
@@ -124,22 +136,27 @@ def main2():
         timeList.append(time() - begin)
         print(f'episode:{episode}  reward:{reward} time:{timeList[-1]}')
 
+        if reward > max_reward and episode > MAX_EPISODE*2/3:
+            max_reward = reward
+            torch.save(net.act.state_dict(), '../TrainedModel/act.pkl')
 
     [p.terminate() for p in child_process_list]
 
-    painter = Painter(load_csv=True, load_dir='../figure1.csv')
-    painter.addData(rewardList, 'MP12-PPO',x=timeList)
-    painter.saveData('../figure1.csv')
+    painter = Painter(load_csv=False)
+    painter.addData(rewardList, 'MP-PPO')
     painter.drawFigure()
 
 
 def child_process2(pipe):
-    setup_seed(2021)
-    env = gym.make('LunarLanderContinuous-v2')
+    setup_seed(0)
+    # env = gym.make('LunarLanderContinuous-v2')
+    env = ArmEnv(mode='hard')
+
+    env.reset()
     while True:
         net = pipe.recv()  # 收主线程的net参数，这句也有同步的功能
         ppo = AgentPPO(net,if_explore=True)
-        rewards, steps = ppo.update_buffer(env, 5000, 1)
+        rewards, steps = ppo.update_buffer(env, 500, 1)
         transition = ppo.buffer.sample_all()
         r = transition.reward
         m = transition.mask

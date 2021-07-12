@@ -3,7 +3,6 @@ import gym
 import matplotlib.pyplot as plt
 from PPO.draw import Painter
 
-
 if __name__ == '__main__':
     env = gym.make('Pendulum-v0')
     obs_dim = env.observation_space.shape[0]
@@ -26,13 +25,11 @@ if __name__ == '__main__':
             else:
                 a = env.action_space.sample()
             o2, r, d, _ = env.step(a)
-            ddpg.replay_buffer.store(o, a, r, o2, d)
+            ddpg.store((o, a, r, o2, d))
 
             if episode >= 5 and j % update_every == 0:
                 for _ in range(update_every):
-                    batch = ddpg.replay_buffer.sample_batch(batch_size)
-                    ddpg.update(data=batch)
-
+                    ddpg.update(batch_size=batch_size)
             o = o2
             ep_reward += r
 
@@ -41,9 +38,9 @@ if __name__ == '__main__':
         print('Episode:', episode, 'Reward:%i' % int(ep_reward))
         rewardList.append(ep_reward)
 
-    painter = Painter(load_csv=True,load_dir='../DDPG_spinningup_PER/compare.csv')
-    painter.addData(rewardList,'DDPG')
-    painter.saveData(save_dir='../DDPG_spinningup_PER/compare.csv')
+    painter = Painter(load_csv=True,load_dir='compare.csv')
+    painter.addData(rewardList,method='DDPG-PER')
+    painter.saveData(save_dir='compare.csv')
     painter.drawFigure()
 
 

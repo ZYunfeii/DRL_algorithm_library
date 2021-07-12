@@ -5,7 +5,7 @@ import torch
 from torch.optim import Adam
 import core
 
-
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class ReplayBuffer:
     """
     A simple FIFO experience replay buffer for TD3 agents.
@@ -35,7 +35,7 @@ class ReplayBuffer:
                      act=self.act_buf[idxs],
                      rew=self.rew_buf[idxs],
                      done=self.done_buf[idxs])
-        return {k: torch.as_tensor(v, dtype=torch.float32) for k,v in batch.items()}
+        return {k: torch.as_tensor(v,dtype=torch.float32,device=device) for k,v in batch.items()}
 
 class TD3:
     def __init__(self, obs_dim, act_dim, actor_critic=core.MLPActorCritic,
@@ -51,8 +51,8 @@ class TD3:
         self.policy_delay = policy_delay
         self.replay_buffer = ReplayBuffer(obs_dim=obs_dim, act_dim=act_dim,size=replay_size)
 
-        self.ac = actor_critic(obs_dim, act_dim)
-        self.ac_targ = deepcopy(self.ac)
+        self.ac = actor_critic(obs_dim, act_dim).to(device)
+        self.ac_targ = deepcopy(self.ac).to(device)
 
         for p in self.ac_targ.parameters():
             p.requires_grad = False
@@ -136,7 +136,7 @@ class TD3:
                         p_targ.data.add_((1 - self.polyak) * p.data)
 
     def get_action(self, o, noise_scale):
-        a = self.ac.act(torch.as_tensor(o, dtype=torch.float32))
+        a = self.ac.act(torch.as_tensor(o, dtype=torch.float32,device=device))
         a += noise_scale * np.random.randn(self.act_dim)
         return np.clip(a, -1, 1)
 

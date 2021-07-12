@@ -3,6 +3,7 @@ from copy import deepcopy
 from torch.optim import Adam
 import torch
 import core as core
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class ReplayBuffer:   # 输入为size；obs的维度(3,)：这里在内部对其解运算成3；action的维度3
     """
@@ -33,7 +34,7 @@ class ReplayBuffer:   # 输入为size；obs的维度(3,)：这里在内部对其
                      act=self.act_buf[idxs],
                      rew=self.rew_buf[idxs],
                      done=self.done_buf[idxs])
-        return {k: torch.as_tensor(v, dtype=torch.float32) for k,v in batch.items()}
+        return {k: torch.as_tensor(v, dtype=torch.float32,device=device) for k,v in batch.items()}
 
 class DDPG:
     def __init__(self, obs_dim, act_dim, act_bound, actor_critic=core.MLPActorCritic, seed=0,
@@ -49,8 +50,8 @@ class DDPG:
         torch.manual_seed(seed)
         np.random.seed(seed)
 
-        self.ac = actor_critic(obs_dim, act_dim, act_limit = 2.0)
-        self.ac_targ = deepcopy(self.ac)
+        self.ac = actor_critic(obs_dim, act_dim, act_limit = 2.0).to(device=device)
+        self.ac_targ = deepcopy(self.ac).to(device=device)
 
         self.pi_optimizer = Adam(self.ac.pi.parameters(), lr=pi_lr)
         self.q_optimizer = Adam(self.ac.q.parameters(), lr=q_lr)
@@ -112,6 +113,6 @@ class DDPG:
                 p_targ.data.add_((1 - self.polyak) * p.data)
 
     def get_action(self, o, noise_scale):
-        a = self.ac.act(torch.as_tensor(o, dtype=torch.float32))
+        a = self.ac.act(torch.as_tensor(o, dtype=torch.float32,device=device))
         a += noise_scale * np.random.randn(self.act_dim)
         return np.clip(a, self.act_bound[0], self.act_bound[1])
