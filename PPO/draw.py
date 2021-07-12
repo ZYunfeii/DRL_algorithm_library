@@ -39,16 +39,26 @@ class Painter:
         """设置成['name1','name2'...]形式"""
         self.hue_order = order
 
-    def addData(self, dataSeries, method, smooth = True):
+    def addData(self, dataSeries, method, x=None, smooth = True):
         if smooth:
             dataSeries = self.smooth(dataSeries)
         size = len(dataSeries)
+        if x is not None:
+            if len(x) != size:
+                print("请输入相同维度的x!")
+                return
         for i in range(size):
-            dataToAppend = {'episode reward':dataSeries[i],'episode':i+1,'Method':method}
+            if x is not None:
+                dataToAppend = {'episode reward':dataSeries[i],'episode':x[i],'Method':method}
+            else:
+                dataToAppend = {'episode reward':dataSeries[i],'episode':i+1,'Method':method}
             self.data = self.data.append(dataToAppend,ignore_index = True)
 
-    def drawFigure(self):
-        sns.set_theme(style="darkgrid")
+    def drawFigure(self,style="darkgrid"):
+        """
+        style: darkgrid, whitegrid, dark, white, ticks
+        """
+        sns.set_theme(style=style)
         sns.set_style(rc={"linewidth": 1})
         print("==正在绘图...")
         sns.relplot(data = self.data, kind = "line", x = "episode", y = "episode reward",
@@ -98,7 +108,7 @@ class Painter:
         print("==对{}数据{}次平滑完成!".format(smooth_method_name,N))
 
     @staticmethod
-    def smooth(data,N=33):
+    def smooth(data,N=5):
         n = (N - 1) // 2
         res = np.zeros(len(data))
         for i in range(len(data)):
@@ -114,8 +124,5 @@ class Painter:
 
 
 if __name__ == "__main__":
-    painter = Painter(load_csv=True,load_dir='figure.csv')
-    painter.setTitle('compare')
-    painter.setXlabel('episode')
-    painter.setYlabel('reward')
-    painter.drawFigure()
+    painter = Painter(load_csv=True, load_dir='./figure1.csv')
+    painter.drawFigure(style="whitegrid")
