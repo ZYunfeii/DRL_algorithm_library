@@ -41,9 +41,9 @@ if __name__ == '__main__':
         print('Episode:', episode, 'Reward:%i' % int(ep_reward))
         rewardList.append(ep_reward)
 
-    painter = Painter(load_csv=True,load_dir='../DDPG_spinningup_PER/compare.csv')
+    painter = Painter(load_csv=True,load_dir='../DDPG_spinningup_HER/HER.csv')
     painter.addData(rewardList,'DDPG')
-    painter.saveData(save_dir='../DDPG_spinningup_PER/compare.csv')
+    painter.saveData(save_dir='../DDPG_spinningup_HER/HER.csv')
     painter.drawFigure()
 
 
