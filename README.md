@@ -7,7 +7,7 @@ This is a reinforcement learning algorithm library. The code takes into account 
 The project covers the following algorithms：
 
 * **DQN, Dueling DQN, D3QN**
-* **DDPG**
+* **DDPG, DDPG-HER, DDPG-PER**
 * **PPO+GAE, Multi-Processing PPO, Discrete PPO**
 * **TD3, Multi-Processing TD3**
 * **SAC**
