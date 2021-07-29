@@ -46,14 +46,15 @@ def gene_new_sas(new_goals, transition):
     new_state = np.concatenate((new_state, new_goals))
     return state, action, new_state
 
-def evaluate(env,agent):
+def evaluate(env,agent,episode):
     reward = 0
-    pendulum_goal = np.array([1.0, 0.0, 0.0], dtype=np.float32)
+    pendulum_goal = np.array([1, 0, 0], dtype=np.float32)
     goal = pendulum_goal
     o = env.reset()
     o = np.concatenate((o, goal))
     for _ in range(500):
-        a = ddpg.get_action(o, None, deterministic=True)
+        # if episode > 80: env.render()
+        a = agent.get_action(o, None, deterministic=True)
         o2, r, d, _ = env.step(a)
         o2 = np.concatenate((o2, goal))
         reward += r
@@ -75,7 +76,7 @@ if __name__ == '__main__':
     MAX_EPISODE = 100
     MAX_STEP = 500
     HER_SAMPLE_NUM = 4
-    update_every = 100
+    update_every = 200
     batch_size = 256
     reward_list = []
     her_reward_list = []
@@ -90,7 +91,7 @@ if __name__ == '__main__':
             else:
                 a = env.action_space.sample()
             o2, _, d, _ = env.step(a)
-            o2 = np.concatenate((o2,goal))
+            o2 = np.concatenate((o2,goal)) # concatenate
             r = calcu_reward(goal, o, a)  # HER has two kinds of reward
             ep_reward += r
             episode_cache.append((o,a,r,o2))
@@ -106,20 +107,25 @@ if __name__ == '__main__':
                 o, a = transition[0], transition[1]
                 r = calcu_reward(new_goal, o, a)
                 o, a, o2 = gene_new_sas(new_goal, transition)
-                ddpg.replay_buffer.store(o, a, r, o2, True if i==len(episode_cache)-1 else False)
+                ddpg.replay_buffer.store(o, a, r, o2, False)
 
         if episode >= 5:
             for _ in range(update_every):
                 batch = ddpg.replay_buffer.sample_batch(batch_size)
                 ddpg.update(data=batch)
-        eval_reward = evaluate(eval_env,ddpg)
+
+        costheta = np.random.rand()  # The paper suggests to use multiple goals
+        sintheta = np.sqrt(1-costheta**2)
+        w = 2 * np.random.rand()
+        goal = np.array([costheta,sintheta,w])
+
+        eval_reward = evaluate(eval_env,ddpg,episode)
         reward_list.append(eval_reward)
         her_reward_list.append(ep_reward)
         print('Episode:', episode, 'HER Reward:%i' % int(ep_reward),'Eval Reward:%i'% int(eval_reward))
 
     painter = Painter(load_csv=True,load_dir='HER.csv')
-    painter.addData(reward_list,'DDPG-HER-reward1')
-    painter.addData(her_reward_list, 'DDPG-HER-reward2')
+    painter.addData(reward_list,'DDPG-HER')
     painter.saveData(save_dir='HER.csv')
     painter.drawFigure()
 
