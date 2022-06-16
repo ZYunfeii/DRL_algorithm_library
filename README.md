@@ -1,3 +1,5 @@
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Ubuntu&size=30&color=4815F7&center=true&lines=performance+and+simplicity)](https://git.io/typing-svg)
+
 # README
 
 This is a reinforcement learning algorithm library. The code takes into account both **performance and simplicity**, with **little dependence**. The algorithm code comes from spinningup and some researchers engaged in reinforcement learning.
